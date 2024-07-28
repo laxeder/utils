@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+
+  development:
+    container_name: express_dev
+    hostname: express
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.dev
+    ports:
+      - "3000:3000"
+    networks:
+      - express_network
+    volumes:
+      - .:/build
+    env_file:
+      - .env.dev
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+
+  production:
+    container_name: express_prod
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.prod
+    ports:
+      - "8080:8080"
+    networks:
+      - express_network
+    volumes:
+      - .:/build
+    env_file:
+      - .env.prod
+    environment:
+      - NODE_ENV=production
+    restart: always
+
+  locust-master:
+    image: locustio/locust
+    ports:
+      - "8089:8089"
+    networks:
+      - express_network
+    volumes:
+      - ./:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --master -H http://master:8089 --host=http://express:3000
+
+  locust-worker:
+    image: locustio/locust
+    networks:
+      - express_network
+    volumes:
+      - ./:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --worker --master-host locust-master
+
+networks:
+  express_network:
+    driver: bridge

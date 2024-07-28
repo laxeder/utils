@@ -1,0 +1,14 @@
+# Arquivos e pastas gerados pelo TypeScript Compiler
+dist/
+*.tsbuildinfo
+
+# Arquivos e pastas relacionados ao sistema de controle de versão
+.env.example
+README.md
+.git/
+.gitignore
+
+# Outros arquivos e pastas específicos do projeto
+node_modules/
+data/
+logs/

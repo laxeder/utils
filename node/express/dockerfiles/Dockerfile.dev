@@ -1,0 +1,23 @@
+# Usa uma imagem de Node.js como base
+FROM node:20
+
+# Configurando variáveis de ambiente
+ENV APP_HOME=/build
+
+# Define o diretório de trabalho dentro do contêiner
+WORKDIR "$APP_HOME"
+
+# Copia os arquivos de dependência do projeto e instala
+COPY package*.json ./
+RUN npm install
+
+# Copia o restante dos arquivos do projeto
+COPY ./ ./
+
+COPY ./.env.dev ./.env
+
+# Expõe a porta 3000 para o servidor de desenvolvimento do TypeScript
+EXPOSE 3000
+
+# Comando para iniciar o servidor de desenvolvimento
+CMD ["npm", "run", "dev"]
